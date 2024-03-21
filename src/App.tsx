@@ -5,7 +5,12 @@ import { Box, Stack, Typography } from "@mui/material";
 import { NewTodoPayload, Todo } from "./types/todo";
 import TodoList from "./components/TodoList";
 import TodoForm from "./components/TodoForm";
-import { addTodoItem, getTodoItems, updateTodoItem } from "./lib/api/todo";
+import {
+  addTodoItem,
+  deleteTodoItem,
+  getTodoItems,
+  updateTodoItem,
+} from "./lib/api/todo";
 
 // TodoAppのcomponentを定義
 const TodoApp: FC = () => {
@@ -24,6 +29,13 @@ const TodoApp: FC = () => {
   const onUpdate = async (updateTodo: Todo) => {
     await updateTodoItem(updateTodo);
     // APIより再度Todo配列を取得
+    const todos = await getTodoItems();
+    setTodos(todos);
+  };
+
+  const onDelete = async (id: number) => {
+    await deleteTodoItem(id);
+    // APIより再度配列を取得
     const todos = await getTodoItems();
     setTodos(todos);
   };
@@ -66,7 +78,7 @@ const TodoApp: FC = () => {
         <Box maxWidth={700} width="100%">
           <Stack spacing={5}>
             <TodoForm onSubmit={onSubmit} />
-            <TodoList todos={todos} onUpdate={onUpdate} onDelete={() => {}} />
+            <TodoList todos={todos} onUpdate={onUpdate} onDelete={onDelete} />
           </Stack>
         </Box>
       </Box>
