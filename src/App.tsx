@@ -5,7 +5,7 @@ import { Box, Stack, Typography } from "@mui/material";
 import { NewTodoPayload, Todo } from "./types/todo";
 import TodoList from "./components/TodoList";
 import TodoForm from "./components/TodoForm";
-import { addTodoItem, getTodoItems } from "./lib/api/todo";
+import { addTodoItem, getTodoItems, updateTodoItem } from "./lib/api/todo";
 
 // TodoAppのcomponentを定義
 const TodoApp: FC = () => {
@@ -21,18 +21,11 @@ const TodoApp: FC = () => {
     setTodos(todos);
   };
 
-  const onUpdate = (updateTodo: Todo) => {
-    setTodos(
-      todos.map((todo) => {
-        if (todo.id === updateTodo.id) {
-          return {
-            ...todo,
-            ...updateTodo, // 必要な部分だけoverride
-          };
-        }
-        return todo;
-      }),
-    );
+  const onUpdate = async (updateTodo: Todo) => {
+    await updateTodoItem(updateTodo);
+    // APIより再度Todo配列を取得
+    const todos = await getTodoItems();
+    setTodos(todos);
   };
 
   useEffect(() => {
@@ -73,7 +66,7 @@ const TodoApp: FC = () => {
         <Box maxWidth={700} width="100%">
           <Stack spacing={5}>
             <TodoForm onSubmit={onSubmit} />
-            <TodoList todos={todos} onUpdate={onUpdate} />
+            <TodoList todos={todos} onUpdate={onUpdate} onDelete={() => {}} />
           </Stack>
         </Box>
       </Box>
